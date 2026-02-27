@@ -253,26 +253,43 @@ ggplot(data = drought_exp_clean,
 
 # model 0: null model
 
+model0 <- lm(total_g ~ 1, 
+             data = drought_exp_clean)
 
 # model 1: all predictors
 
+model1 <- lm(total_g ~ sla + water_treatment + species_name, 
+             data = drought_exp_clean)
 
 # model 2: SLA and water treatment
 
+model2 <- lm(total_g ~ sla + species_name, 
+             data = drought_exp_clean)
 
 # model 3: SLA and species
 
+model3 <- lm(total_g ~ sla + species_name, 
+             data = drought_exp_clean)
 
 # model 4: water treatment and species
 
+model4 <- lm(total_g ~ water_treatment + species_name, 
+             data = drought_exp_clean)
 
 # model 5: SLA
 
+model5 <- lm(total_g ~ sla, 
+             data = drought_exp_clean)
 
 # model 6: water treatment
 
+model6 <- lm(total_g ~ water_treatment, #response ~ predictor + predictor
+             data = drought_exp_clean)
 
 # model 7: species
+# 
+model7 <- lm(total_g ~ species_name, 
+             data = drought_exp_clean)
 
 ```
 
@@ -283,56 +300,82 @@ Insert code to use the `AICc()` function to calculate the AIC for each model.
 Arrange by decreasing AIC.
 
 
+```{r}
+#| label: AIC model selection
+AICc(
+  model0, 
+  model1, 
+  model2, 
+  model3, 
+  model4, 
+  model5, 
+  model6, 
+  model7
+) |> 
+  arrange(AICc)
+```
+Arrange by decreasing AIC. 
+best model is model4: the one that includes only water treatment and species 
+
 
 
 ## Model diagnostics
 
 Insert code to look at the diagnostic plots for the best model.
 
-
-
+```{r}
+par(mfrow = c(2,2)) #display plots in 2x2 grid
+plot(model4) #plot model4 diagnostics
+```
+diagnostic plots look good. 
+residals(standing in for errors) loook nromally distributed based on qq plot. 
+residuals look homoscedastic (have const variace) based on residuals vs fitted plot and scale loc plot.
+no outliers influencing model est of coefficients
 
 
 ## Summary
 
 Insert code to display the summary for the best model. 
+```{r}
+summary(model4)
 
-
+```
 
 **What are the reference levels?**  
 
-
+drought treatment and lotus scoparius because they are not listed in the summary output. 
 
 **What does the `(Intercept)` represent?**  
-
+est mass for drought stressed lotus scoparius 0.055 g plus minus 0.02
 
 
 **What does `water_treatmentWell watered` represent?**
 
-
+this is the model prediction for the diff in lotus scoparius mass btwn well watered and drought stressed treatments. the model preducts the diff is 0.12 +/- 0.02 (SE) g
 
 **What does `species_namePenstemon centranthifolius` represent?**  
 
-
+this is the model prediction for the diff between penstemon centranthifolius mass in the well watered treatment and lotus scoparius mass in well watered treatment. the model predicts that this difference is 0.05  +/- 0.03 (SE) g
 
 **What does `species_nameEschscholzia californica` represent?**
 
 
+this is the model prediction for the diff between Eschscholzia californica mass in the well watered treatment and lotus scoparius mass in well watered treatment. the model predicts that this difference is 0.23  +/- 0.03 (SE) g
 
 
 ## Stop and think: what does this model mean?  
 
 **What is the best model?**
 
-[insert your response here]
+the best model includes water treatment and species as predictors 
 
 **How much variation in the response (total mass, in grams) does this model explain?**
 
-[insert your response here]
+this model explains 72% of the variation in plant mass. 
 
 **How do we interpret the effects of the predictors on the response variable (again, total mass in grams)?**
 
-[insert your response here]
+water treatment and species influences plant mass
 
 # 4. Model predictions
 
